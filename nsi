@@ -292,34 +292,45 @@ cmd_git() {
     read -rp "Adresse email GitHub     : " github_email
     read -rp "Token GitHub             : " github_token
 
+    local repo_name
+    while true; do
+        read -rp "Nom de ton dépôt GitHub  : " repo_name
+        if [[ "$repo_name" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,98}[a-zA-Z0-9]$|^[a-zA-Z0-9]$ ]]; then
+            break
+        fi
+        echo "  Nom invalide. Utilise uniquement des lettres, chiffres, tirets, points ou underscores." >&2
+        echo "  Exemple : PROG-NSI, mon-projet, nsi_2025" >&2
+    done
+
     git config --global user.name  "$github_user"
     git config --global user.email "$github_email"
 
     echo "$github_token" | gh auth login --with-token
 
     echo ""
-    if gh repo view "$github_user/PROG-NSI" &>/dev/null; then
-        echo "Repo PROG-NSI trouvé sur GitHub. Récupération en local..."
+    if gh repo view "$github_user/$repo_name" &>/dev/null; then
+        echo "Repo $repo_name trouvé sur GitHub. Récupération en local..."
         tmp=$(mktemp -d)
-        gh repo clone "$github_user/PROG-NSI" "$tmp/PROG-NSI"
-        rm -rf ~/PROG-NSI
-        mv "$tmp/PROG-NSI" ~/PROG-NSI
+        gh repo clone "$github_user/$repo_name" "$tmp/$repo_name"
+        rm -rf ~/"$repo_name"
+        mv "$tmp/$repo_name" ~/"$repo_name"
         rmdir "$tmp"
     else
-        echo "Création du repo PROG-NSI sur GitHub..."
-        mkdir -p ~/PROG-NSI
-        cd ~/PROG-NSI
+        echo "Création du repo $repo_name sur GitHub..."
+        mkdir -p ~/"$repo_name"
+        cd ~/"$repo_name"
         git init
         git branch -M main
-        echo "# PROG-NSI" > README.md
+        echo "# $repo_name" > README.md
         git add README.md
         git commit -m "Initial commit"
-        gh repo create PROG-NSI --private --source . --remote origin --push
+        gh repo create "$repo_name" --private --source . --remote origin --push
     fi
 
     echo ""
     echo "Git et GitHub configurés pour $github_user."
-    echo "Dossier de travail : ~/PROG-NSI"
+    echo "Dépôt : $repo_name"
+    echo "Dossier de travail : ~/$repo_name"
 }
 
 # --- auto-install si lancé hors /usr/local/bin ---
