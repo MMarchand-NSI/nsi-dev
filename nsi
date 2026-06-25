@@ -301,6 +301,29 @@ install_rust() {
     fi
 }
 
+# --- c/c++ ---
+
+install_c() {
+    command -v gcc &>/dev/null && return 0
+    if has_apt; then
+        pkg_install build-essential
+    elif has_dnf; then
+        pkg_install gcc gcc-c++ make
+    elif has_brew; then
+        xcode-select --install 2>/dev/null || true
+    fi
+}
+
+remove_c() {
+    if has_apt; then
+        pkg_remove build-essential
+    elif has_dnf; then
+        pkg_remove gcc gcc-c++ make
+    elif has_brew; then
+        echo "Sur macOS, gcc est fourni par Xcode Command Line Tools (non désinstallable via nsi)." >&2
+    fi
+}
+
 # --- prolog ---
 
 install_prolog() {
@@ -485,6 +508,7 @@ case "$cmd" in
             nasm)       install_nasm ;;
             rust)       install_rust ;;
             prolog)     install_prolog ;;
+            c)          install_c ;;
             *) echo "Composant inconnu: $component" >&2; exit 1 ;;
         esac
         ;;
@@ -498,6 +522,7 @@ case "$cmd" in
             nasm)       remove_nasm ;;
             rust)       remove_rust ;;
             prolog)     remove_prolog ;;
+            c)          remove_c ;;
             *) echo "Composant inconnu: $component" >&2; exit 1 ;;
         esac
         ;;
@@ -519,7 +544,7 @@ case "$cmd" in
         cmd_settings
         ;;
     *)
-        echo "Usage: nsi install|remove base|gleam|postgresql|openjdk|nasm|rust|prolog" >&2
+        echo "Usage: nsi install|remove base|gleam|postgresql|openjdk|nasm|rust|prolog|c" >&2
         echo "       nsi update" >&2
         echo "       nsi git" >&2
         echo "       nsi push | nsi pull" >&2
