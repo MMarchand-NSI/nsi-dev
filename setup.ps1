@@ -30,6 +30,7 @@ if (-not (Get-Command code -ErrorAction SilentlyContinue)) {
     Invoke-Native winget install -e --id Microsoft.VisualStudioCode --silent `
         --accept-package-agreements --accept-source-agreements
 }
+Invoke-Native code --install-extension ms-vscode-remote.remote-wsl
 
 # 2. Fonctionnalités Windows pour WSL
 $needsRestart = $false
