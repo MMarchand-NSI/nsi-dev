@@ -62,6 +62,15 @@ pkg_remove() {
     fi
 }
 
+# --- wget ---
+
+install_wget() {
+    command -v wget &>/dev/null && return 0
+    pkg_install wget
+}
+
+remove_wget() { pkg_remove wget; }
+
 # --- git ---
 
 install_git() {
@@ -147,6 +156,7 @@ remove_vscode() {
 # --- base ---
 
 install_base() {
+    install_wget
     install_git
     install_uv
     install_graphviz
@@ -155,6 +165,7 @@ install_base() {
 }
 
 remove_base() {
+    remove_wget
     remove_git
     remove_uv
     remove_graphviz
