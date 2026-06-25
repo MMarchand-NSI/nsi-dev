@@ -379,6 +379,7 @@ cmd_git() {
     curl -fsSL "$PYPROJECT_URL" -o "$HOME/$repo_name"/pyproject.toml
 
     cd "$HOME/$repo_name"
+    uv sync
 
     echo ""
     echo "Tout est prêt ! Ouverture de VSCode..."
