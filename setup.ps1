@@ -31,8 +31,6 @@ if (-not (Get-Command code -ErrorAction SilentlyContinue)) {
         --accept-package-agreements --accept-source-agreements
 }
 Invoke-Native code --install-extension ms-vscode-remote.remote-wsl
-Invoke-Native code --install-extension ms-python.python
-Invoke-Native code --install-extension tomoki1207.pdf
 
 # 2. Fonctionnalités Windows pour WSL
 $needsRestart = $false

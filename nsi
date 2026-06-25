@@ -5,6 +5,7 @@ GITHUB_RAW_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/nsi
 SETTINGS_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/settings.json"
 PYPROJECT_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/pyproject.toml"
 GITIGNORE_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/.gitignore"
+EXTENSIONS_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/extensions.json"
 INSTALL_PATH="/usr/local/bin/nsi"
 
 # --- Détection OS ---
@@ -237,7 +238,6 @@ install_postgresql() {
         brew services start postgresql || true
         psql postgres -c "CREATE ROLE dev SUPERUSER LOGIN PASSWORD 'dev';" 2>/dev/null || true
     fi
-    code --install-extension ms-ossdata.vscode-pgsql 2>/dev/null || true
 }
 
 remove_postgresql() {
@@ -289,9 +289,10 @@ remove_nasm() { pkg_remove nasm; }
 
 cmd_settings() {
     mkdir -p .vscode
-    curl -fsSL "$SETTINGS_URL"  -o .vscode/settings.json
-    curl -fsSL "$PYPROJECT_URL" -o pyproject.toml
-    curl -fsSL "$GITIGNORE_URL" -o .gitignore
+    curl -fsSL "$SETTINGS_URL"   -o .vscode/settings.json
+    curl -fsSL "$EXTENSIONS_URL" -o .vscode/extensions.json
+    curl -fsSL "$PYPROJECT_URL"  -o pyproject.toml
+    curl -fsSL "$GITIGNORE_URL"  -o .gitignore
     echo "Paramètres appliqués dans $(pwd)"
 }
 
@@ -379,9 +380,10 @@ cmd_git() {
 
     echo "Déploiement des paramètres VSCode et Python..."
     mkdir -p "$HOME/$repo_name"/.vscode
-    curl -fsSL "$SETTINGS_URL"   -o "$HOME/$repo_name"/.vscode/settings.json
-    curl -fsSL "$PYPROJECT_URL"  -o "$HOME/$repo_name"/pyproject.toml
-    curl -fsSL "$GITIGNORE_URL"  -o "$HOME/$repo_name"/.gitignore
+    curl -fsSL "$SETTINGS_URL"    -o "$HOME/$repo_name"/.vscode/settings.json
+    curl -fsSL "$EXTENSIONS_URL"  -o "$HOME/$repo_name"/.vscode/extensions.json
+    curl -fsSL "$PYPROJECT_URL"   -o "$HOME/$repo_name"/pyproject.toml
+    curl -fsSL "$GITIGNORE_URL"   -o "$HOME/$repo_name"/.gitignore
 
     cd "$HOME/$repo_name"
     uv sync
