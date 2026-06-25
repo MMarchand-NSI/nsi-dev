@@ -52,12 +52,12 @@ if ($needsRestart) {
 # 3. WSL version 2 par défaut
 Invoke-Native wsl --set-default-version 2
 
-# 4. Installation et initialisation de Debian
-$ErrorActionPreference = "SilentlyContinue"
-wsl -d $Distro -u root -- true *>$null
-$debianInstalled = ($LASTEXITCODE -eq 0)
-$ErrorActionPreference = "Stop"
-if (-not $debianInstalled) {
+# 4. Installation de Debian
+$prevEncoding = [Console]::OutputEncoding
+[Console]::OutputEncoding = [System.Text.Encoding]::Unicode
+$wslDistros = wsl --list --quiet 2>&1
+[Console]::OutputEncoding = $prevEncoding
+if ($wslDistros -notcontains $Distro) {
     Write-Host "Installation de Debian..."
     Invoke-Native wsl --install -d $Distro --no-launch
 }
