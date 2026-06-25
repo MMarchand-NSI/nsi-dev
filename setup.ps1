@@ -53,8 +53,11 @@ if ($needsRestart) {
 Invoke-Native wsl --set-default-version 2
 
 # 4. Installation et initialisation de Debian
-$installed = wsl --list --quiet 2>&1
-if ($installed -notmatch $Distro) {
+$ErrorActionPreference = "SilentlyContinue"
+wsl -d $Distro -u root -- true *>$null
+$debianInstalled = ($LASTEXITCODE -eq 0)
+$ErrorActionPreference = "Stop"
+if (-not $debianInstalled) {
     Write-Host "Installation de Debian..."
     Invoke-Native wsl --install -d $Distro --no-launch
 }
