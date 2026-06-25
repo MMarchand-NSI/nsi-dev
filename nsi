@@ -249,6 +249,34 @@ cmd_update() {
     echo "nsi mis à jour."
 }
 
+# --- git ---
+
+cmd_git() {
+    echo ""
+    echo "Configuration de Git et GitHub"
+    echo "=============================="
+    echo ""
+    echo "Il te faut un token d'accès personnel GitHub."
+    echo "Pour en créer un :"
+    echo "  1. Va sur https://github.com/settings/tokens"
+    echo "  2. Clique sur 'Generate new token (classic)'"
+    echo "  3. Donne-lui un nom (ex: 'NSI'), sélectionne la portée 'repo'"
+    echo "  4. Clique sur 'Generate token' et copie-le"
+    echo ""
+    read -rp "Nom d'utilisateur GitHub : " github_user
+    read -rp "Adresse email GitHub     : " github_email
+    read -rsp "Token GitHub             : " github_token
+    echo ""
+
+    git config --global user.name  "$github_user"
+    git config --global user.email "$github_email"
+
+    echo "$github_token" | gh auth login --with-token
+
+    echo ""
+    echo "Git et GitHub configurés pour $github_user."
+}
+
 # --- auto-install si lancé hors /usr/local/bin ---
 
 SELF="$(realpath "$0" 2>/dev/null || readlink -f "$0" 2>/dev/null || echo "$0")"
@@ -288,9 +316,13 @@ case "$cmd" in
     update)
         cmd_update
         ;;
+    git)
+        cmd_git
+        ;;
     *)
         echo "Usage: nsi install|remove base|gleam|postgresql|openjdk|nasm" >&2
         echo "       nsi update" >&2
+        echo "       nsi git" >&2
         exit 1
         ;;
 esac
