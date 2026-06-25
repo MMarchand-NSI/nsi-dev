@@ -57,9 +57,9 @@ if ($installed -notmatch $Distro) {
 # Première initialisation en root (bypasse l'OOBE)
 wsl -d $Distro -u root -- true
 
-# 5. Utilisateur padawan (idempotent : création uniquement si inexistant)
+# 5. Utilisateur padawan
 Write-Host "Configuration de l'utilisateur $WslUser..."
-wsl -d $Distro -u root -- bash -c "id -u $WslUser >/dev/null 2>&1 || (useradd -m -s /bin/bash $WslUser && echo '${WslUser}:${WslPass}' | chpasswd && usermod -aG sudo $WslUser)"
+wsl -d $Distro -u root -- bash -c "useradd -m -s /bin/bash $WslUser 2>/dev/null; echo '${WslUser}:${WslPass}' | chpasswd; usermod -aG sudo $WslUser"
 
 # 6. Téléchargement de nsi
 Write-Host "Installation de nsi..."
