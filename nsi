@@ -366,11 +366,10 @@ cmd_git() {
         echo "Création du dépôt $repo_name sur GitHub..."
         mkdir -p ~/"$repo_name"
         cd ~/"$repo_name"
-        git init
+        git init -b main
         echo "# $repo_name" > README.md
         git add README.md
         git commit -m "Initial commit"
-        git branch -M main
         gh repo create "$repo_name" --private --source . --remote origin --push
     fi
 
