@@ -285,6 +285,7 @@ cmd_git() {
 
     echo "$github_token" | gh auth login --with-token
 
+    cd ~
     echo ""
     if gh repo view "$github_user/PROG-NSI" &>/dev/null; then
         echo "Repo PROG-NSI trouvé sur GitHub. Récupération en local..."
