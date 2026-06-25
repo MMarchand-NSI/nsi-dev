@@ -265,8 +265,7 @@ cmd_git() {
     echo ""
     read -rp "Nom d'utilisateur GitHub : " github_user
     read -rp "Adresse email GitHub     : " github_email
-    read -rsp "Token GitHub             : " github_token
-    echo ""
+    read -rp "Token GitHub             : " github_token
 
     git config --global user.name  "$github_user"
     git config --global user.email "$github_email"
