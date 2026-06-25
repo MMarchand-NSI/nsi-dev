@@ -127,6 +127,7 @@ remove_gh() {
               /usr/share/keyrings/githubcli-archive-keyring.gpg
     elif has_dnf; then
         dnf remove -y gh
+        rm -f /etc/yum.repos.d/gh-cli.repo
     elif has_brew; then
         brew uninstall gh
     fi
@@ -139,6 +140,11 @@ install_vscode() {
     command -v code &>/dev/null && return 0
     if has_brew; then
         brew install --cask visual-studio-code
+    elif has_dnf; then
+        rpm --import https://packages.microsoft.com/keys/microsoft.asc
+        printf '[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc\n' \
+            > /etc/yum.repos.d/vscode.repo
+        dnf install -y code
     elif command -v snap &>/dev/null; then
         snap install code --classic
     else
@@ -150,6 +156,9 @@ remove_vscode() {
     is_wsl && return 0
     if has_brew; then
         brew uninstall --cask visual-studio-code
+    elif has_dnf; then
+        dnf remove -y code
+        rm -f /etc/yum.repos.d/vscode.repo
     elif command -v snap &>/dev/null; then
         snap remove code
     fi
@@ -206,16 +215,35 @@ remove_gleam() {
 
 install_postgresql() {
     command -v psql &>/dev/null && return 0
-    pkg_install postgresql
     if has_apt; then
+        pkg_install postgresql
         service postgresql start || true
         su -c "psql -c \"ALTER USER postgres PASSWORD 'postgres';\"" postgres || true
         su -c "psql -c \"CREATE ROLE dev SUPERUSER LOGIN PASSWORD 'dev';\"" postgres 2>/dev/null || true
+    elif has_dnf; then
+        pkg_install postgresql-server postgresql
+        postgresql-setup --initdb || true
+        systemctl enable --now postgresql || true
+        su -c "psql -c \"ALTER USER postgres PASSWORD 'postgres';\"" postgres || true
+        su -c "psql -c \"CREATE ROLE dev SUPERUSER LOGIN PASSWORD 'dev';\"" postgres 2>/dev/null || true
+    elif has_brew; then
+        brew install postgresql
+        brew services start postgresql || true
     fi
     code --install-extension ms-ossdata.vscode-pgsql 2>/dev/null || true
 }
 
-remove_postgresql() { pkg_remove postgresql; }
+remove_postgresql() {
+    if has_apt; then
+        pkg_remove postgresql
+    elif has_dnf; then
+        systemctl stop postgresql || true
+        pkg_remove postgresql-server postgresql
+    elif has_brew; then
+        brew services stop postgresql || true
+        brew uninstall postgresql
+    fi
+}
 
 # --- openjdk ---
 
@@ -223,6 +251,8 @@ install_openjdk() {
     command -v javac &>/dev/null && return 0
     if has_apt; then
         pkg_install default-jdk
+    elif has_dnf; then
+        pkg_install java-latest-openjdk-devel
     elif has_brew; then
         brew install openjdk
         brew link --force --overwrite openjdk
@@ -230,8 +260,13 @@ install_openjdk() {
 }
 
 remove_openjdk() {
-    if has_apt; then pkg_remove default-jdk
-    elif has_brew; then brew uninstall openjdk; fi
+    if has_apt; then
+        pkg_remove default-jdk
+    elif has_dnf; then
+        pkg_remove java-latest-openjdk-devel
+    elif has_brew; then
+        brew uninstall openjdk
+    fi
 }
 
 # --- nasm ---
