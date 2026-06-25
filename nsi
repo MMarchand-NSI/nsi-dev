@@ -301,6 +301,29 @@ install_rust() {
     fi
 }
 
+# --- prolog ---
+
+install_prolog() {
+    command -v swipl &>/dev/null && return 0
+    if has_apt; then
+        pkg_install swi-prolog
+    elif has_dnf; then
+        pkg_install pl
+    elif has_brew; then
+        brew install swi-prolog
+    fi
+}
+
+remove_prolog() {
+    if has_apt; then
+        pkg_remove swi-prolog
+    elif has_dnf; then
+        pkg_remove pl
+    elif has_brew; then
+        brew uninstall swi-prolog
+    fi
+}
+
 remove_rust() {
     if has_brew; then
         brew uninstall rust
@@ -461,6 +484,7 @@ case "$cmd" in
             openjdk)    install_openjdk ;;
             nasm)       install_nasm ;;
             rust)       install_rust ;;
+            prolog)     install_prolog ;;
             *) echo "Composant inconnu: $component" >&2; exit 1 ;;
         esac
         ;;
@@ -473,6 +497,7 @@ case "$cmd" in
             openjdk)    remove_openjdk ;;
             nasm)       remove_nasm ;;
             rust)       remove_rust ;;
+            prolog)     remove_prolog ;;
             *) echo "Composant inconnu: $component" >&2; exit 1 ;;
         esac
         ;;
@@ -494,7 +519,7 @@ case "$cmd" in
         cmd_settings
         ;;
     *)
-        echo "Usage: nsi install|remove base|gleam|postgresql|openjdk|nasm|rust" >&2
+        echo "Usage: nsi install|remove base|gleam|postgresql|openjdk|nasm|rust|prolog" >&2
         echo "       nsi update" >&2
         echo "       nsi git" >&2
         echo "       nsi push | nsi pull" >&2
