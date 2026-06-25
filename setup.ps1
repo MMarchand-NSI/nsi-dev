@@ -18,6 +18,8 @@ if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     exit
 }
 
+Set-PSDebug -Trace 1
+
 # 1. VSCode
 if (-not (Get-Command code -ErrorAction SilentlyContinue)) {
     Write-Host "Installation de VSCode..."
