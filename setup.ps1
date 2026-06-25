@@ -10,6 +10,10 @@ $WslPass   = "padawan"
 
 function Write-Red($msg) { Write-Host $msg -ForegroundColor Red }
 
+function Invoke-Native {
+    & $args[0] $args[1..($args.Count-1)]
+    if ($LASTEXITCODE -ne 0) { throw "Echec (code $LASTEXITCODE) : $args" }
+}
 
 # Élévation automatique si pas admin
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
@@ -23,7 +27,7 @@ if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 # 1. VSCode
 if (-not (Get-Command code -ErrorAction SilentlyContinue)) {
     Write-Host "Installation de VSCode..."
-    winget install -e --id Microsoft.VisualStudioCode --silent `
+    Invoke-Native winget install -e --id Microsoft.VisualStudioCode --silent `
         --accept-package-agreements --accept-source-agreements
 }
 
@@ -46,38 +50,38 @@ if ($needsRestart) {
 }
 
 # 3. WSL version 2 par défaut
-wsl --set-default-version 2 | Out-Null
+Invoke-Native wsl --set-default-version 2
 
 # 4. Installation et initialisation de Debian
 $installed = wsl --list --quiet 2>&1
 if ($installed -notmatch $Distro) {
     Write-Host "Installation de Debian..."
-    wsl --install -d $Distro --no-launch
+    Invoke-Native wsl --install -d $Distro --no-launch
 }
 # Première initialisation en root (bypasse l'OOBE)
-wsl -d $Distro -u root -- true
+Invoke-Native wsl -d $Distro -u root -- true
 
 # 5. Utilisateur padawan
 Write-Host "Configuration de l'utilisateur $WslUser..."
-wsl -d $Distro -u root -- bash -c "useradd -m -s /bin/bash $WslUser 2>/dev/null; echo '${WslUser}:${WslPass}' | chpasswd; usermod -aG sudo $WslUser"
+Invoke-Native wsl -d $Distro -u root -- bash -c "useradd -m -s /bin/bash $WslUser 2>/dev/null; echo '${WslUser}:${WslPass}' | chpasswd; usermod -aG sudo $WslUser"
 
 # 6. Téléchargement de nsi
 Write-Host "Installation de nsi..."
-wsl -d $Distro -u root -- bash -c "apt-get update -qq && apt-get install -y -qq curl && curl -fsSL $NsiUrl -o /usr/local/bin/nsi && chmod +x /usr/local/bin/nsi"
+Invoke-Native wsl -d $Distro -u root -- bash -c "apt-get update -qq && apt-get install -y -qq curl && curl -fsSL $NsiUrl -o /usr/local/bin/nsi && chmod +x /usr/local/bin/nsi"
 
 # 7. Sudo sans mot de passe pour padawan
-wsl -d $Distro -u root -- bash -c "echo '$WslUser ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/$WslUser && chmod 440 /etc/sudoers.d/$WslUser"
+Invoke-Native wsl -d $Distro -u root -- bash -c "echo '$WslUser ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/$WslUser && chmod 440 /etc/sudoers.d/$WslUser"
 
 # 8. Installation des outils de base en tant que padawan
 Write-Host "Installation des outils de base..."
-wsl -d $Distro -u $WslUser -- sudo nsi install base
+Invoke-Native wsl -d $Distro -u $WslUser -- sudo nsi install base
 
 # Révocation du sudo sans mot de passe
-wsl -d $Distro -u root -- rm -f /etc/sudoers.d/$WslUser
+Invoke-Native wsl -d $Distro -u root -- rm -f /etc/sudoers.d/$WslUser
 
 # 9. Définir padawan comme utilisateur par défaut via wsl.conf
-wsl -d $Distro -u root -- bash -c "printf '[user]\ndefault=$WslUser\n' > /etc/wsl.conf"
-wsl --terminate $Distro
+Invoke-Native wsl -d $Distro -u root -- bash -c "printf '[user]\ndefault=$WslUser\n' > /etc/wsl.conf"
+Invoke-Native wsl --terminate $Distro
 
 Write-Host ""
 Write-Host "Installation terminée !" -ForegroundColor Green
