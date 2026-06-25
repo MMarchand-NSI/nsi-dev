@@ -286,7 +286,25 @@ cmd_git() {
     echo "$github_token" | gh auth login --with-token
 
     echo ""
+    if gh repo view "$github_user/PROG-NSI" &>/dev/null; then
+        echo "Repo PROG-NSI trouvé sur GitHub. Récupération en local..."
+        rm -rf ~/PROG-NSI
+        gh repo clone "$github_user/PROG-NSI" ~/PROG-NSI
+    else
+        echo "Création du repo PROG-NSI sur GitHub..."
+        mkdir -p ~/PROG-NSI
+        cd ~/PROG-NSI
+        git init
+        git branch -M main
+        echo "# PROG-NSI" > README.md
+        git add README.md
+        git commit -m "Initial commit"
+        gh repo create PROG-NSI --private --source . --remote origin --push
+    fi
+
+    echo ""
     echo "Git et GitHub configurés pour $github_user."
+    echo "Dossier de travail : ~/PROG-NSI"
 }
 
 # --- auto-install si lancé hors /usr/local/bin ---
