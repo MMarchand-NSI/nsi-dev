@@ -1,13 +1,7 @@
 {
-  "github.copilot.enable": {
-    "*": false
-  },
-  "github.copilot.editor.enableAutoCompletions": false,
-  "github.copilot.chat.enabled": false,
-  "editor.inlineSuggest.enabled": false,
-  "chat.commandCenter.enabled": false,
+  "chat.disableAIFeatures": true,
+  "github.copilot.enable": { "*": false },
   "workbench.commandPalette.experimental.suggestCommands": false,
   "vsintellicode.modify.editor.suggestSelection": "none",
-  "telemetry.feedback.enabled": false,
-  "telemetry.editStats.enabled": false
+  "telemetry.telemetryLevel": "off"
 }
