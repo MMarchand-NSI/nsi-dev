@@ -63,7 +63,7 @@ wsl -d $Distro -u root -- bash -c "useradd -m -s /bin/bash $WslUser 2>/dev/null;
 
 # 6. Téléchargement de nsi
 Write-Host "Installation de nsi..."
-wsl -d $Distro -u root -- bash -c "curl -fsSL $NsiUrl -o /usr/local/bin/nsi && chmod +x /usr/local/bin/nsi"
+wsl -d $Distro -u root -- bash -c "apt-get update -qq && apt-get install -y -qq curl && curl -fsSL $NsiUrl -o /usr/local/bin/nsi && chmod +x /usr/local/bin/nsi"
 
 # 7. Sudo sans mot de passe pour padawan
 wsl -d $Distro -u root -- bash -c "echo '$WslUser ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/$WslUser && chmod 440 /etc/sudoers.d/$WslUser"
