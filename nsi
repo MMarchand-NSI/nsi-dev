@@ -367,10 +367,10 @@ cmd_git() {
         mkdir -p ~/"$repo_name"
         cd ~/"$repo_name"
         git init
-        git branch -M main
         echo "# $repo_name" > README.md
         git add README.md
         git commit -m "Initial commit"
+        git branch -M main
         gh repo create "$repo_name" --private --source . --remote origin --push
     fi
 
