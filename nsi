@@ -286,6 +286,35 @@ install_nasm() {
 
 remove_nasm() { pkg_remove nasm; }
 
+# --- rust ---
+
+install_rust() {
+    command -v rustc &>/dev/null && return 0
+    if has_brew; then
+        brew install rust
+    else
+        RUSTUP_HOME=/usr/local/rustup CARGO_HOME=/usr/local/cargo \
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+            | sh -s -- -y --no-modify-path
+        find /usr/local/cargo/bin -maxdepth 1 -type f \
+            -exec ln -sf {} /usr/local/bin/ \;
+    fi
+}
+
+remove_rust() {
+    if has_brew; then
+        brew uninstall rust
+    else
+        RUSTUP_HOME=/usr/local/rustup CARGO_HOME=/usr/local/cargo \
+            /usr/local/cargo/bin/rustup self uninstall -y 2>/dev/null || true
+        rm -rf /usr/local/rustup /usr/local/cargo
+        rm -f /usr/local/bin/rustc /usr/local/bin/cargo /usr/local/bin/rustup \
+              /usr/local/bin/rustfmt /usr/local/bin/rustdoc \
+              /usr/local/bin/rust-gdb /usr/local/bin/rust-lldb \
+              /usr/local/bin/clippy-driver
+    fi
+}
+
 # --- settings ---
 
 cmd_settings() {
@@ -431,6 +460,7 @@ case "$cmd" in
             postgresql) install_postgresql ;;
             openjdk)    install_openjdk ;;
             nasm)       install_nasm ;;
+            rust)       install_rust ;;
             *) echo "Composant inconnu: $component" >&2; exit 1 ;;
         esac
         ;;
@@ -442,6 +472,7 @@ case "$cmd" in
             postgresql) remove_postgresql ;;
             openjdk)    remove_openjdk ;;
             nasm)       remove_nasm ;;
+            rust)       remove_rust ;;
             *) echo "Composant inconnu: $component" >&2; exit 1 ;;
         esac
         ;;
@@ -463,7 +494,7 @@ case "$cmd" in
         cmd_settings
         ;;
     *)
-        echo "Usage: nsi install|remove base|gleam|postgresql|openjdk|nasm" >&2
+        echo "Usage: nsi install|remove base|gleam|postgresql|openjdk|nasm|rust" >&2
         echo "       nsi update" >&2
         echo "       nsi git" >&2
         echo "       nsi push | nsi pull" >&2
