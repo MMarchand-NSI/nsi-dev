@@ -58,8 +58,11 @@ if ($installed -notmatch $Distro) {
 wsl -d $Distro -u root -- true
 
 # 5. Utilisateur padawan
+$ErrorActionPreference = "SilentlyContinue"
 wsl -d $Distro -u root -- id -u $WslUser *>$null
-if ($LASTEXITCODE -ne 0) {
+$padawanExists = ($LASTEXITCODE -eq 0)
+$ErrorActionPreference = "Stop"
+if (-not $padawanExists) {
     Write-Host "Création de l'utilisateur $WslUser..."
     wsl -d $Distro -u root -- useradd -m -s /bin/bash $WslUser
     wsl -d $Distro -u root -- bash -c "echo '${WslUser}:${WslPass}' | chpasswd"
