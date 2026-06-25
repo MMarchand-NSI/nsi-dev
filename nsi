@@ -276,6 +276,11 @@ cmd_pull() {
 # --- git ---
 
 cmd_git() {
+    if [[ "$(id -u)" -eq 0 ]]; then
+        echo "Erreur : 'nsi git' ne doit pas être lancé avec sudo." >&2
+        echo "Lance simplement : nsi git" >&2
+        exit 1
+    fi
     echo ""
     echo "Configuration de Git et GitHub"
     echo "=============================="
@@ -330,13 +335,15 @@ cmd_git() {
     fi
 
     echo "Déploiement des paramètres VSCode et Python..."
-    mkdir -p ~/"$repo_name"/.vscode
-    curl -fsSL "$SETTINGS_URL"  -o ~/"$repo_name"/.vscode/settings.json
-    curl -fsSL "$PYPROJECT_URL" -o ~/"$repo_name"/pyproject.toml
+    mkdir -p "$HOME/$repo_name"/.vscode
+    curl -fsSL "$SETTINGS_URL"  -o "$HOME/$repo_name"/.vscode/settings.json
+    curl -fsSL "$PYPROJECT_URL" -o "$HOME/$repo_name"/pyproject.toml
+
+    cd "$HOME/$repo_name"
 
     echo ""
     echo "Tout est prêt ! Ouverture de VSCode..."
-    code ~/"$repo_name"
+    code "$HOME/$repo_name"
 
     echo ""
     echo "Git et GitHub configurés pour $github_user."

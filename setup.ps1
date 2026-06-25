@@ -85,8 +85,19 @@ Invoke-Native wsl -d $Distro -u $WslUser -- sudo nsi install base
 # Révocation du sudo sans mot de passe
 Invoke-Native wsl -d $Distro -u root -- rm -f /etc/sudoers.d/$WslUser
 
-# 9. Définir padawan comme utilisateur par défaut via wsl.conf
+# 9. Définir padawan comme utilisateur par défaut
 Invoke-Native wsl -d $Distro -u root -- bash -c "printf '[user]\ndefault=$WslUser\n' > /etc/wsl.conf"
+
+# Aussi via le registre Windows (pour les versions WSL qui ignorent wsl.conf pour le DefaultUid)
+$padawanUid = [int]((wsl -d $Distro -u root -- id -u $WslUser) -replace '\D')
+$lxssPath = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Lxss"
+$debianKey = Get-ChildItem $lxssPath -ErrorAction SilentlyContinue |
+    Where-Object { (Get-ItemProperty $_.PSPath -ErrorAction SilentlyContinue).DistributionName -eq $Distro } |
+    Select-Object -First 1
+if ($null -ne $debianKey -and $padawanUid -gt 0) {
+    Set-ItemProperty $debianKey.PSPath -Name DefaultUid -Value $padawanUid -ErrorAction SilentlyContinue
+}
+
 Invoke-Native wsl --terminate $Distro
 
 Write-Host ""
@@ -95,7 +106,7 @@ Write-Host ""
 Write-Host "Une console Debian va s'ouvrir. Suis les instructions pour configurer ton compte GitHub." -ForegroundColor Cyan
 
 # Ouverture d'une console Debian interactive pour lancer nsi git
-Start-Process wsl -ArgumentList "-d $Distro -u $WslUser -- bash -c `"nsi git; exec bash`""
+Start-Process wsl -ArgumentList "-d $Distro -u $WslUser -- bash -c `"cd ~ && nsi git; exec bash`""
 
 } catch {
     Write-Host ""
