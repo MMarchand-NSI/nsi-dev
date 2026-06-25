@@ -85,18 +85,17 @@ Invoke-Native wsl -d $Distro -u $WslUser -- sudo nsi install base
 # Révocation du sudo sans mot de passe
 Invoke-Native wsl -d $Distro -u root -- rm -f /etc/sudoers.d/$WslUser
 
-# Dossier de travail
-Invoke-Native wsl -d $Distro -u $WslUser -- mkdir -p /home/$WslUser/PROG-NSI
-
 # 9. Définir padawan comme utilisateur par défaut via wsl.conf
 Invoke-Native wsl -d $Distro -u root -- bash -c "printf '[user]\ndefault=$WslUser\n' > /etc/wsl.conf"
 Invoke-Native wsl --terminate $Distro
 
 Write-Host ""
 Write-Host "Installation terminée !" -ForegroundColor Green
+Write-Host ""
+Write-Host "Une console Debian va s'ouvrir. Suis les instructions pour configurer ton compte GitHub." -ForegroundColor Cyan
 
-# Ouverture de VSCode dans WSL
-Invoke-Native wsl -d $Distro -u $WslUser -- bash -c "code ~/PROG-NSI"
+# Ouverture d'une console Debian interactive pour lancer nsi git
+Start-Process wsl -ArgumentList "-d $Distro -u $WslUser -- bash -c `"nsi git; exec bash`""
 
 } catch {
     Write-Host ""
