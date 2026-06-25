@@ -4,6 +4,7 @@ set -euo pipefail
 GITHUB_RAW_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/nsi"
 SETTINGS_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/settings.json"
 PYPROJECT_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/pyproject.toml"
+GITIGNORE_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/.gitignore"
 INSTALL_PATH="/usr/local/bin/nsi"
 
 # --- Détection OS ---
@@ -288,8 +289,9 @@ remove_nasm() { pkg_remove nasm; }
 
 cmd_settings() {
     mkdir -p .vscode
-    curl -fsSL "$SETTINGS_URL" -o .vscode/settings.json
+    curl -fsSL "$SETTINGS_URL"  -o .vscode/settings.json
     curl -fsSL "$PYPROJECT_URL" -o pyproject.toml
+    curl -fsSL "$GITIGNORE_URL" -o .gitignore
     echo "Paramètres appliqués dans $(pwd)"
 }
 
@@ -375,8 +377,9 @@ cmd_git() {
 
     echo "Déploiement des paramètres VSCode et Python..."
     mkdir -p "$HOME/$repo_name"/.vscode
-    curl -fsSL "$SETTINGS_URL"  -o "$HOME/$repo_name"/.vscode/settings.json
-    curl -fsSL "$PYPROJECT_URL" -o "$HOME/$repo_name"/pyproject.toml
+    curl -fsSL "$SETTINGS_URL"   -o "$HOME/$repo_name"/.vscode/settings.json
+    curl -fsSL "$PYPROJECT_URL"  -o "$HOME/$repo_name"/pyproject.toml
+    curl -fsSL "$GITIGNORE_URL"  -o "$HOME/$repo_name"/.gitignore
 
     cd "$HOME/$repo_name"
     uv sync

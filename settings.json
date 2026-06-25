@@ -3,5 +3,10 @@
   "github.copilot.enable": { "*": false },
   "workbench.commandPalette.experimental.suggestCommands": false,
   "vsintellicode.modify.editor.suggestSelection": "none",
-  "telemetry.telemetryLevel": "off"
+  "telemetry.telemetryLevel": "off",
+  "files.exclude": {
+    "**/.vscode": true,
+    "**/pyproject.toml": true,
+    "**/.gitignore": true
+  }
 }
