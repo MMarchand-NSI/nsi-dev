@@ -293,6 +293,8 @@ cmd_git() {
     read -rp "Token GitHub             : " github_token
 
     local repo_name
+    echo "Si tu as déjà un dépôt GitHub pour ce cours, entre son nom exact."
+    echo "Sinon, choisis un nom pour en créer un nouveau (ex: PROG-NSI, nsi_2025)."
     while true; do
         read -rp "Nom de ton dépôt GitHub  : " repo_name
         if [[ "$repo_name" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,98}[a-zA-Z0-9]$|^[a-zA-Z0-9]$ ]]; then
