@@ -7,7 +7,6 @@
         "iterteam.dependi",
         "aaron-bond.better-comments",
         "tamasfe.even-better-toml",
-        "sanaajani.taskrunnercode",
-        "ms-ossdata.vscode-pgsql"
+        "sanaajani.taskrunnercode"
     ]
 }
