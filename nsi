@@ -334,11 +334,19 @@ fi
 
 # --- Dispatch ---
 
+require_root() {
+    if [[ "$(id -u)" -ne 0 ]]; then
+        echo "Cette commande doit être exécutée avec sudo : sudo nsi $*" >&2
+        exit 1
+    fi
+}
+
 cmd="${1:-}"
 component="${2:-}"
 
 case "$cmd" in
     install)
+        require_root "$@"
         case "$component" in
             base)       install_base ;;
             gleam)      install_gleam ;;
@@ -349,6 +357,7 @@ case "$cmd" in
         esac
         ;;
     remove)
+        require_root "$@"
         case "$component" in
             base)       remove_base ;;
             gleam)      remove_gleam ;;
@@ -359,6 +368,7 @@ case "$cmd" in
         esac
         ;;
     update)
+        require_root "$@"
         cmd_update
         ;;
     git)
@@ -371,6 +381,7 @@ case "$cmd" in
         cmd_pull
         ;;
     settings)
+        require_root "$@"
         cmd_settings
         ;;
     *)
