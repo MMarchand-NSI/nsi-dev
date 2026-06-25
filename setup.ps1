@@ -46,34 +46,35 @@ if ($needsRestart) {
 # 3. WSL version 2 par défaut
 wsl --set-default-version 2 | Out-Null
 
-# 4. Installation et initialisation silencieuse de Debian
+# 4. Installation et initialisation de Debian
 $installed = wsl --list --quiet 2>&1
 if ($installed -notmatch $Distro) {
     Write-Host "Installation de Debian..."
     wsl --install -d $Distro --no-launch
 }
-# initialize sans OOBE (root par défaut jusqu'à l'étape 7)
-debian install --root | Out-Null
+# Première initialisation en root (bypasse l'OOBE)
+wsl -d $Distro -u root -- true
 
 # 5. Utilisateur padawan
-debian run id -u $WslUser 2>&1 | Out-Null
+wsl -d $Distro -u root -- id -u $WslUser 2>&1 | Out-Null
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Création de l'utilisateur $WslUser..."
-    debian run useradd -m -s /bin/bash $WslUser
-    debian run bash -c "echo '${WslUser}:${WslPass}' | chpasswd"
-    debian run usermod -aG sudo $WslUser
+    wsl -d $Distro -u root -- useradd -m -s /bin/bash $WslUser
+    wsl -d $Distro -u root -- bash -c "echo '${WslUser}:${WslPass}' | chpasswd"
+    wsl -d $Distro -u root -- usermod -aG sudo $WslUser
 }
 
 # 6. Téléchargement de nsi
 Write-Host "Installation de nsi..."
-debian run bash -c "curl -fsSL $NsiUrl -o /usr/local/bin/nsi && chmod +x /usr/local/bin/nsi"
+wsl -d $Distro -u root -- bash -c "curl -fsSL $NsiUrl -o /usr/local/bin/nsi && chmod +x /usr/local/bin/nsi"
 
-# 7. Installation des outils de base (encore en root)
+# 7. Installation des outils de base (en root)
 Write-Host "Installation des outils de base..."
-debian run nsi install base
+wsl -d $Distro -u root -- nsi install base
 
-# 8. Définir padawan comme utilisateur par défaut
-debian config --default-user $WslUser
+# 8. Définir padawan comme utilisateur par défaut via wsl.conf
+wsl -d $Distro -u root -- bash -c "printf '[user]\ndefault=$WslUser\n' > /etc/wsl.conf"
+wsl --terminate $Distro
 
 Write-Host ""
 Write-Host "Installation terminée !" -ForegroundColor Green
