@@ -285,12 +285,14 @@ cmd_git() {
 
     echo "$github_token" | gh auth login --with-token
 
-    cd ~
     echo ""
     if gh repo view "$github_user/PROG-NSI" &>/dev/null; then
         echo "Repo PROG-NSI trouvé sur GitHub. Récupération en local..."
+        tmp=$(mktemp -d)
+        gh repo clone "$github_user/PROG-NSI" "$tmp/PROG-NSI"
         rm -rf ~/PROG-NSI
-        gh repo clone "$github_user/PROG-NSI" ~/PROG-NSI
+        mv "$tmp/PROG-NSI" ~/PROG-NSI
+        rmdir "$tmp"
     else
         echo "Création du repo PROG-NSI sur GitHub..."
         mkdir -p ~/PROG-NSI
