@@ -380,6 +380,7 @@ cmd_update() {
     curl -fsSL "$GITHUB_RAW_URL" | sudo tee "$INSTALL_PATH" > /dev/null
     sudo chmod +x "$INSTALL_PATH"
     echo "nsi mis à jour."
+    exit 0
 }
 
 # --- push / pull ---
