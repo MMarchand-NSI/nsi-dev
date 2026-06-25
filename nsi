@@ -249,6 +249,18 @@ cmd_update() {
     echo "nsi mis à jour."
 }
 
+# --- push / pull ---
+
+cmd_push() {
+    git add -A
+    git commit -m "Sauvegarde du $(date '+%Y-%m-%d %H:%M')" || true
+    git push
+}
+
+cmd_pull() {
+    git pull
+}
+
 # --- git ---
 
 cmd_git() {
@@ -318,10 +330,17 @@ case "$cmd" in
     git)
         cmd_git
         ;;
+    push)
+        cmd_push
+        ;;
+    pull)
+        cmd_pull
+        ;;
     *)
         echo "Usage: nsi install|remove base|gleam|postgresql|openjdk|nasm" >&2
         echo "       nsi update" >&2
         echo "       nsi git" >&2
+        echo "       nsi push | nsi pull" >&2
         exit 1
         ;;
 esac
