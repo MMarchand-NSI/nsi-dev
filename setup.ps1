@@ -56,7 +56,7 @@ if ($installed -notmatch $Distro) {
 wsl -d $Distro -u root -- true
 
 # 5. Utilisateur padawan
-wsl -d $Distro -u root -- id -u $WslUser 2>&1 | Out-Null
+wsl -d $Distro -u root -- id -u $WslUser *>$null
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Création de l'utilisateur $WslUser..."
     wsl -d $Distro -u root -- useradd -m -s /bin/bash $WslUser
