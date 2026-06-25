@@ -68,11 +68,14 @@ if ($LASTEXITCODE -ne 0) {
 Write-Host "Installation de nsi..."
 wsl -d $Distro -u root -- bash -c "curl -fsSL $NsiUrl -o /usr/local/bin/nsi && chmod +x /usr/local/bin/nsi"
 
-# 7. Installation des outils de base (en root)
-Write-Host "Installation des outils de base..."
-wsl -d $Distro -u root -- nsi install base
+# 7. Sudo sans mot de passe pour padawan
+wsl -d $Distro -u root -- bash -c "echo '$WslUser ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/$WslUser && chmod 440 /etc/sudoers.d/$WslUser"
 
-# 8. Définir padawan comme utilisateur par défaut via wsl.conf
+# 8. Installation des outils de base en tant que padawan
+Write-Host "Installation des outils de base..."
+wsl -d $Distro -u $WslUser -- sudo nsi install base
+
+# 9. Définir padawan comme utilisateur par défaut via wsl.conf
 wsl -d $Distro -u root -- bash -c "printf '[user]\ndefault=$WslUser\n' > /etc/wsl.conf"
 wsl --terminate $Distro
 
