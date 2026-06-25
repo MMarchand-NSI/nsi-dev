@@ -273,7 +273,8 @@ cmd_git() {
     echo "  1. Va sur https://github.com/settings/tokens"
     echo "  2. Clique sur 'Generate new token (classic)'"
     echo "  3. Donne-lui un nom (ex: 'NSI'), sélectionne les portées 'repo' et 'admin:org'"
-    echo "  4. Clique sur 'Generate token' et copie-le"
+    echo "  4. Clique sur 'Generate token' et copie-le IMMEDIATEMENT
+     ATTENTION : le token ne s'affiche qu'une seule fois, il sera impossible de le retrouver ensuite !"
     echo ""
     read -rp "Nom d'utilisateur GitHub : " github_user
     read -rp "Adresse email GitHub     : " github_email
