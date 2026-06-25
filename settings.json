@@ -11,9 +11,5 @@
   },
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 1000,
-  "git.autofetch": true,
-  "workbench.colorCustomizations": {
-    "gitDecoration.modifiedResourceForeground": "#ff9900",
-    "gitDecoration.untrackedResourceForeground": "#ff9900"
-  }
+  "git.autofetch": true
 }
