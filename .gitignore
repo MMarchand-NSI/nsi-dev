@@ -8,3 +8,17 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+
+# Gleam
+*.beam
+
+# Rust
+target/
+Cargo.lock
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
