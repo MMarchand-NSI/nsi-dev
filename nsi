@@ -244,8 +244,8 @@ remove_nasm() { pkg_remove nasm; }
 
 cmd_update() {
     echo "Mise à jour de nsi..."
-    curl -fsSL "$GITHUB_RAW_URL" -o "$INSTALL_PATH"
-    chmod +x "$INSTALL_PATH"
+    curl -fsSL "$GITHUB_RAW_URL" | sudo tee "$INSTALL_PATH" > /dev/null
+    sudo chmod +x "$INSTALL_PATH"
     echo "nsi mis à jour."
 }
 
