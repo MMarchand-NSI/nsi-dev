@@ -2,6 +2,8 @@
 set -euo pipefail
 
 GITHUB_RAW_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/nsi"
+SETTINGS_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/settings.json"
+PYPROJECT_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/pyproject.toml"
 INSTALL_PATH="/usr/local/bin/nsi"
 
 # --- Détection OS ---
@@ -210,6 +212,7 @@ install_postgresql() {
         su -c "psql -c \"ALTER USER postgres PASSWORD 'postgres';\"" postgres || true
         su -c "psql -c \"CREATE ROLE dev SUPERUSER LOGIN PASSWORD 'dev';\"" postgres 2>/dev/null || true
     fi
+    code --install-extension ms-ossdata.vscode-pgsql 2>/dev/null || true
 }
 
 remove_postgresql() { pkg_remove postgresql; }
@@ -217,7 +220,7 @@ remove_postgresql() { pkg_remove postgresql; }
 # --- openjdk ---
 
 install_openjdk() {
-    command -v java &>/dev/null && return 0
+    command -v javac &>/dev/null && return 0
     if has_apt; then
         pkg_install default-jdk
     elif has_brew; then
@@ -239,6 +242,15 @@ install_nasm() {
 }
 
 remove_nasm() { pkg_remove nasm; }
+
+# --- settings ---
+
+cmd_settings() {
+    mkdir -p .vscode
+    curl -fsSL "$SETTINGS_URL" -o .vscode/settings.json
+    curl -fsSL "$PYPROJECT_URL" -o pyproject.toml
+    echo "Paramètres appliqués dans $(pwd)"
+}
 
 # --- update ---
 
@@ -358,11 +370,15 @@ case "$cmd" in
     pull)
         cmd_pull
         ;;
+    settings)
+        cmd_settings
+        ;;
     *)
         echo "Usage: nsi install|remove base|gleam|postgresql|openjdk|nasm" >&2
         echo "       nsi update" >&2
         echo "       nsi git" >&2
         echo "       nsi push | nsi pull" >&2
+        echo "       nsi settings" >&2
         exit 1
         ;;
 esac
