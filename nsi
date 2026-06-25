@@ -122,7 +122,7 @@ install_gh() {
 
 remove_gh() {
     if has_apt; then
-        apt-get remove -y gh
+        pkg_remove gh
         rm -f /etc/apt/sources.list.d/github-cli.list \
               /usr/share/keyrings/githubcli-archive-keyring.gpg
     elif has_dnf; then
@@ -214,7 +214,12 @@ remove_gleam() {
 # --- postgresql ---
 
 install_postgresql() {
-    command -v psql &>/dev/null && return 0
+    # Sur dnf, psql (client) et postgresql-server sont des paquets séparés
+    if has_dnf; then
+        rpm -q postgresql-server &>/dev/null && return 0
+    else
+        command -v psql &>/dev/null && return 0
+    fi
     if has_apt; then
         pkg_install postgresql
         service postgresql start || true
@@ -222,13 +227,14 @@ install_postgresql() {
         su -c "psql -c \"CREATE ROLE dev SUPERUSER LOGIN PASSWORD 'dev';\"" postgres 2>/dev/null || true
     elif has_dnf; then
         pkg_install postgresql-server postgresql
-        postgresql-setup --initdb || true
+        [[ -f /var/lib/pgsql/data/PG_VERSION ]] || postgresql-setup --initdb
         systemctl enable --now postgresql || true
         su -c "psql -c \"ALTER USER postgres PASSWORD 'postgres';\"" postgres || true
         su -c "psql -c \"CREATE ROLE dev SUPERUSER LOGIN PASSWORD 'dev';\"" postgres 2>/dev/null || true
     elif has_brew; then
         brew install postgresql
         brew services start postgresql || true
+        psql postgres -c "CREATE ROLE dev SUPERUSER LOGIN PASSWORD 'dev';" 2>/dev/null || true
     fi
     code --install-extension ms-ossdata.vscode-pgsql 2>/dev/null || true
 }
@@ -337,7 +343,9 @@ cmd_git() {
     echo "Sinon, choisis un nom pour en créer un nouveau (ex: PROG-NSI, nsi_2025)."
     while true; do
         read -rp "Nom de ton dépôt GitHub  : " repo_name
-        if [[ "$repo_name" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,98}[a-zA-Z0-9]$|^[a-zA-Z0-9]$ ]]; then
+        if [[ "$repo_name" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]{0,98}[a-zA-Z0-9]$|^[a-zA-Z0-9]$ ]] \
+            && [[ "$repo_name" != *".."* ]] \
+            && [[ "$repo_name" != *".git" ]]; then
             break
         fi
         echo "  Nom invalide. Utilise uniquement des lettres, chiffres, tirets, points ou underscores." >&2
@@ -352,11 +360,8 @@ cmd_git() {
     echo ""
     if gh repo view "$github_user/$repo_name" &>/dev/null; then
         echo "Dépôt $repo_name trouvé sur GitHub. Récupération en local..."
-        tmp=$(mktemp -d)
-        gh repo clone "$github_user/$repo_name" "$tmp/$repo_name"
-        rm -rf ~/"$repo_name"
-        mv "$tmp/$repo_name" ~/"$repo_name"
-        rmdir "$tmp"
+        rm -rf "$HOME/$repo_name"
+        gh repo clone "$github_user/$repo_name" "$HOME/$repo_name"
     else
         echo "Création du dépôt $repo_name sur GitHub..."
         mkdir -p ~/"$repo_name"
