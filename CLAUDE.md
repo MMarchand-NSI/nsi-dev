@@ -77,3 +77,28 @@ repo/
   setup.ps1       # bootstrap Windows
   nsi       # script shell principal (Linux / Mac / WSL)
 ```
+
+## Gestion de git
+
+```
+nsi git         # configuration initiale
+nsi push        # commit horodaté + push
+nsi pull        # pull
+```
+
+### `nsi git`
+
+Configure git et authentifie GitHub. Demande interactivement :
+- le nom d'utilisateur GitHub
+- l'adresse email GitHub
+- un token d'accès personnel (portées `repo` et `admin:org`, créé sur https://github.com/settings/tokens)
+
+Appelle ensuite `gh auth login --with-token` avec le token fourni.
+
+### `nsi push`
+
+Équivalent de `git add -A && git commit -m "Sauvegarde du <date>" && git push`. Ne produit pas d'erreur si rien n'a changé.
+
+### `nsi pull`
+
+Équivalent de `git pull`.
