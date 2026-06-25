@@ -1,5 +1,7 @@
 $ErrorActionPreference = "Stop"
 
+try {
+
 $SetupUrl  = "https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/setup.ps1"
 $NsiUrl    = "https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/nsi"
 $Distro    = "Debian"
@@ -8,7 +10,6 @@ $WslPass   = "padawan"
 
 function Write-Red($msg) { Write-Host $msg -ForegroundColor Red }
 
-try {
 
 # Élévation automatique si pas admin
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
@@ -18,7 +19,6 @@ if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     exit
 }
 
-Set-PSDebug -Trace 1
 
 # 1. VSCode
 if (-not (Get-Command code -ErrorAction SilentlyContinue)) {
@@ -89,3 +89,4 @@ Write-Host "Installation terminée !" -ForegroundColor Green
     Read-Host "Appuyez sur Entree pour quitter"
     exit 1
 }
+Read-Host "Appuyez sur Entree pour quitter"
