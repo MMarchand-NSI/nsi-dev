@@ -75,6 +75,9 @@ wsl -d $Distro -u root -- bash -c "echo '$WslUser ALL=(ALL) NOPASSWD:ALL' > /etc
 Write-Host "Installation des outils de base..."
 wsl -d $Distro -u $WslUser -- sudo nsi install base
 
+# Révocation du sudo sans mot de passe
+wsl -d $Distro -u root -- rm -f /etc/sudoers.d/$WslUser
+
 # 9. Définir padawan comme utilisateur par défaut via wsl.conf
 wsl -d $Distro -u root -- bash -c "printf '[user]\ndefault=$WslUser\n' > /etc/wsl.conf"
 wsl --terminate $Distro
