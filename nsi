@@ -6,6 +6,7 @@ SETTINGS_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/setti
 PYPROJECT_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/pyproject.toml"
 GITIGNORE_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/.gitignore"
 EXTENSIONS_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/extensions.json"
+TASKS_URL="https://raw.githubusercontent.com/MMarchand-NSI/nsi-dev/main/tasks.json"
 INSTALL_PATH="/usr/local/bin/nsi"
 
 # --- Détection OS ---
@@ -291,6 +292,7 @@ cmd_settings() {
     mkdir -p .vscode
     curl -fsSL "$SETTINGS_URL"   -o .vscode/settings.json
     curl -fsSL "$EXTENSIONS_URL" -o .vscode/extensions.json
+    curl -fsSL "$TASKS_URL"      -o .vscode/tasks.json
     curl -fsSL "$PYPROJECT_URL"  -o pyproject.toml
     curl -fsSL "$GITIGNORE_URL"  -o .gitignore
     echo "Paramètres appliqués dans $(pwd)"
@@ -382,6 +384,7 @@ cmd_git() {
     mkdir -p "$HOME/$repo_name"/.vscode
     curl -fsSL "$SETTINGS_URL"    -o "$HOME/$repo_name"/.vscode/settings.json
     curl -fsSL "$EXTENSIONS_URL"  -o "$HOME/$repo_name"/.vscode/extensions.json
+    curl -fsSL "$TASKS_URL"       -o "$HOME/$repo_name"/.vscode/tasks.json
     curl -fsSL "$PYPROJECT_URL"   -o "$HOME/$repo_name"/pyproject.toml
     curl -fsSL "$GITIGNORE_URL"   -o "$HOME/$repo_name"/.gitignore
 
