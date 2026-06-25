@@ -2,14 +2,19 @@
   "chat.disableAIFeatures": true,
   "github.copilot.enable": { "*": false },
   "workbench.commandPalette.experimental.suggestCommands": false,
-  "vsintellicode.modify.editor.suggestSelection": "none",
-  "telemetry.telemetryLevel": "off",
   "files.exclude": {
     "**/.vscode": true,
     "**/pyproject.toml": true,
-    "**/.gitignore": true
+    "**/uv.lock": true,
+    "**/.gitignore": true,
+    "**/.venv": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true
   },
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 1000,
-  "git.autofetch": true
+  "git.autofetch": true,
+  "python.testing.pytestArgs": [],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true
 }
