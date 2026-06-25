@@ -38,7 +38,7 @@ Rends-toi sur [https://github.com/join](https://github.com/join) et crée un com
 
 ## Etape 3 — Configurer ton compte GitHub
 
-Une fois l'installation terminée, ouvre **VSCode**, puis ouvre un terminal intégré (`Terminal > Nouveau terminal` ou `Ctrl+ù`).
+Ouvre **VSCode**, puis ouvre un terminal intégré (`Terminal > Nouveau terminal` ou `Ctrl+ù`).
 
 Dans ce terminal, tape :
 
@@ -50,9 +50,12 @@ Il te sera demandé :
 - ton **nom d'utilisateur GitHub**
 - ton **adresse e-mail GitHub**
 - un **token d'accès personnel** (une sorte de mot de passe sécurisé)
+- le **nom de ton dépôt** (si tu en as déjà un, donne son nom exact ; sinon choisis un nom comme `PROG-NSI`)
 
 Pour créer ton token : va sur [https://github.com/settings/tokens](https://github.com/settings/tokens), crée un token avec les portées (scopes) `repo` et `admin:org`.  
 **Attention : le token ne s'affiche qu'une seule fois, copie-le immédiatement.**
+
+Une fois terminé, **VSCode s'ouvre automatiquement** dans ton dépôt. C'est là que tu travailleras.
 
 ---
 

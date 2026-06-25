@@ -311,14 +311,14 @@ cmd_git() {
 
     echo ""
     if gh repo view "$github_user/$repo_name" &>/dev/null; then
-        echo "Repo $repo_name trouvé sur GitHub. Récupération en local..."
+        echo "Dépôt $repo_name trouvé sur GitHub. Récupération en local..."
         tmp=$(mktemp -d)
         gh repo clone "$github_user/$repo_name" "$tmp/$repo_name"
         rm -rf ~/"$repo_name"
         mv "$tmp/$repo_name" ~/"$repo_name"
         rmdir "$tmp"
     else
-        echo "Création du repo $repo_name sur GitHub..."
+        echo "Création du dépôt $repo_name sur GitHub..."
         mkdir -p ~/"$repo_name"
         cd ~/"$repo_name"
         git init
@@ -329,10 +329,18 @@ cmd_git() {
         gh repo create "$repo_name" --private --source . --remote origin --push
     fi
 
+    echo "Déploiement des paramètres VSCode et Python..."
+    mkdir -p ~/"$repo_name"/.vscode
+    curl -fsSL "$SETTINGS_URL"  -o ~/"$repo_name"/.vscode/settings.json
+    curl -fsSL "$PYPROJECT_URL" -o ~/"$repo_name"/pyproject.toml
+
+    echo ""
+    echo "Tout est prêt ! Ouverture de VSCode..."
+    code ~/"$repo_name"
+
     echo ""
     echo "Git et GitHub configurés pour $github_user."
-    echo "Dépôt : $repo_name"
-    echo "Dossier de travail : ~/$repo_name"
+    echo "Dépôt : $repo_name  —  Dossier : ~/$repo_name"
 }
 
 # --- auto-install si lancé hors /usr/local/bin ---
