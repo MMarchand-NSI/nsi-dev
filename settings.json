@@ -13,8 +13,7 @@
   "files.autoSaveDelay": 1000,
   "git.autofetch": true,
   "workbench.colorCustomizations": {
-    "gitDecoration.modifiedResourceForeground": "#e05252",
-    "gitDecoration.addedResourceForeground": "#e09d52",
-    "gitDecoration.untrackedResourceForeground": "#e09d52"
+    "gitDecoration.modifiedResourceForeground": "#ff9900",
+    "gitDecoration.untrackedResourceForeground": "#ff9900"
   }
 }
