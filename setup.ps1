@@ -8,6 +8,8 @@ $WslPass   = "padawan"
 
 function Write-Red($msg) { Write-Host $msg -ForegroundColor Red }
 
+try {
+
 # Élévation automatique si pas admin
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
         [Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -75,3 +77,11 @@ debian config --default-user $WslUser
 
 Write-Host ""
 Write-Host "Installation terminée !" -ForegroundColor Green
+
+} catch {
+    Write-Host ""
+    Write-Red "ERREUR : $_"
+    Write-Host ""
+    Read-Host "Appuyez sur Entree pour quitter"
+    exit 1
+}
