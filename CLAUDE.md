@@ -30,7 +30,7 @@ Les scripts sont servis depuis GitHub raw (branche main), sans releases à gére
 4. Configure l'utilisateur `padawan` / `padawan` en ligne de commande
 5. Accorde temporairement le sudo sans mot de passe, puis installe les outils via `sudo nsi install base`, et révoque le sudo sans mot de passe
 6. Définit `padawan` comme utilisateur par défaut (via `/etc/wsl.conf` + clé de registre `DefaultUid`)
-7. Ouvre une console Debian interactive (`wsl -d Debian -u padawan`) pour que l'élève lance `nsi git`
+7. Ouvre une console Debian interactive qui lance automatiquement `nsi git`, puis laisse un shell interactif (`exec bash`) une fois la configuration terminée
 
 ### Linux / Mac
 
