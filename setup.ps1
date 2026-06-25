@@ -57,17 +57,9 @@ if ($installed -notmatch $Distro) {
 # Première initialisation en root (bypasse l'OOBE)
 wsl -d $Distro -u root -- true
 
-# 5. Utilisateur padawan
-$ErrorActionPreference = "SilentlyContinue"
-wsl -d $Distro -u root -- id -u $WslUser *>$null
-$padawanExists = ($LASTEXITCODE -eq 0)
-$ErrorActionPreference = "Stop"
-if (-not $padawanExists) {
-    Write-Host "Création de l'utilisateur $WslUser..."
-    wsl -d $Distro -u root -- useradd -m -s /bin/bash $WslUser
-    wsl -d $Distro -u root -- bash -c "echo '${WslUser}:${WslPass}' | chpasswd"
-    wsl -d $Distro -u root -- usermod -aG sudo $WslUser
-}
+# 5. Utilisateur padawan (idempotent : création uniquement si inexistant)
+Write-Host "Configuration de l'utilisateur $WslUser..."
+wsl -d $Distro -u root -- bash -c "id -u $WslUser >/dev/null 2>&1 || (useradd -m -s /bin/bash $WslUser && echo '${WslUser}:${WslPass}' | chpasswd && usermod -aG sudo $WslUser)"
 
 # 6. Téléchargement de nsi
 Write-Host "Installation de nsi..."
