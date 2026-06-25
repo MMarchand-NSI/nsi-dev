@@ -366,11 +366,13 @@ cmd_git() {
         gh repo clone "$github_user/$repo_name" "$HOME/$repo_name"
     else
         echo "Création du dépôt $repo_name sur GitHub..."
-        mkdir -p ~/"$repo_name"
-        cd ~/"$repo_name"
+        mkdir -p "$HOME/$repo_name"
+        cd "$HOME/$repo_name"
         git init -b main
         echo "# $repo_name" > README.md
-        git add README.md
+        curl -fsSL "$PYPROJECT_URL" -o pyproject.toml
+        curl -fsSL "$GITIGNORE_URL" -o .gitignore
+        git add README.md pyproject.toml .gitignore
         git commit -m "Initial commit"
         gh repo create "$repo_name" --private --source . --remote origin --push
     fi
