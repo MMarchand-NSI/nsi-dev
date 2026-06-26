@@ -361,6 +361,26 @@ remove_rust() {
     fi
 }
 
+# --- hide ---
+
+cmd_hide() {
+    local settings=".vscode/settings.json"
+    [[ -f "$settings" ]] || { echo "Fichier $settings introuvable. Lance nsi git d'abord." >&2; exit 1; }
+    python3 - "$settings" <<'EOF'
+import json, sys
+path = sys.argv[1]
+with open(path) as f:
+    data = json.load(f)
+exclude = data.get("files.exclude", {})
+new_val = not all(v is True for v in exclude.values())
+data["files.exclude"] = {k: new_val for k in exclude}
+with open(path, "w") as f:
+    json.dump(data, f, indent=2, ensure_ascii=False)
+    f.write("\n")
+print("Fichiers " + ("masqués" if new_val else "affichés") + " dans l'Explorer VSCode.")
+EOF
+}
+
 # --- settings ---
 
 cmd_settings() {
@@ -544,12 +564,16 @@ case "$cmd" in
         require_root "$@"
         cmd_settings
         ;;
+    hide)
+        cmd_hide
+        ;;
     *)
         echo "Usage: nsi install|remove base|gleam|postgresql|openjdk|nasm|rust|prolog|c" >&2
         echo "       nsi update" >&2
         echo "       nsi git" >&2
         echo "       nsi push | nsi pull" >&2
         echo "       nsi settings" >&2
+        echo "       nsi hide" >&2
         exit 1
         ;;
 esac
