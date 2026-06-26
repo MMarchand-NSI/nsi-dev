@@ -9,7 +9,11 @@
     "**/.gitignore": true,
     "**/.venv": true,
     "**/__pycache__": true,
-    "**/.pytest_cache": true
+    "**/.pytest_cache": true,
+    "**/.coverage": true
+  },
+  "terminal.integrated.env.linux": {
+    "PYTHONPATH": "${workspaceFolder}"
   },
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 1000,

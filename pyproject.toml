@@ -12,4 +12,5 @@ dev = [
 
 [tool.pytest.ini_options]
 python_files = ["*.py"]
-
+pythonpath = ["."]
+addopts = "--cov-branch"
